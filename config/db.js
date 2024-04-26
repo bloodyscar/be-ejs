@@ -3,9 +3,10 @@ const mysql = require('mysql2');
 
 // create the connection to database
 const connection = mysql.createPool({
-    host: "localhost",
-    user: "root",
-    password: "",
+    // host: "localhost",
+    host: "103.206.246.227",
+    user: "monty",
+    password: "Demokrat@2024",
     database: "db_karyawan",
 });
 
