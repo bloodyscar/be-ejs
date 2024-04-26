@@ -34,7 +34,7 @@ module.exports = {
                 formData.append('npk', req.body.npk);
 
                 // Send the image file to the FastAPI server
-                let response = await axios.post('http://127.0.0.1:8000/upload-photo', formData, {
+                let response = await axios.post('http://103.206.246.227/upload-photo', formData, {
                     headers: { 'Content-Type': 'multipart/form-data' }
                 })
 
@@ -79,7 +79,7 @@ module.exports = {
             formData.append('npk', req.session.user.npk);
 
             // Send the image file to the FastAPI server
-            axios.post('http://127.0.0.1:8000/check_face', formData, {
+            axios.post('http://103.206.246.227/check_face', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             })
                 .then(async response => {
