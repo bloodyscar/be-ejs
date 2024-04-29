@@ -23,12 +23,13 @@ module.exports = {
                 // check jwt
                 console.log("null 1", req.session);
                 var token = req.cookies.auth;
+                console.log("token", token)
 
                 jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function (err, token_data) {
                     if (err) {
                         console.log("null error jwt", req.session);
                         console.log(err);
-                        return res.status(401).json({ statusCode: 401, message: 'Token tidak sama' })
+                        return res.status(401).json({ statusCode: 401, message: err })
                     } else {
                         console.log("else req session user", token_data.user);
                         req.session.user = {
