@@ -19,11 +19,12 @@ module.exports = {
     jwtToSession: async (req, res, next) => {
         try {
             if (!req.session.user) {
-                // Extract token from request headers, query parameters, or cookies
-                const token = req.cookies.auth;
-                if (!token) {
-                    return res.status(401).json({ error: 'Authentication token is missing' });
+                // Extract token from the Authorization header
+                const authHeader = req.headers.authorization;
+                if (!authHeader || !authHeader.startsWith('Bearer ')) {
+                    return res.status(401).json({ error: 'Authentication token is missing or invalid' });
                 }
+                const token = authHeader.split(' ')[1];
 
                 // Verify the token
                 jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decodedToken) => {
