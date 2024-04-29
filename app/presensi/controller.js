@@ -100,6 +100,29 @@ module.exports = {
             res.status(500).send(`Error uploading file: ${err.message}`);
         }
     },
+    checkPresensi: async (req, res) => {
+        try {
+            const promisePool = pool.promise();
+            // Check if the user exists in the database
+            let [query, field] = await promisePool.query(
+                'SELECT karyawan_id, jam_absen_masuk, jam_absen_keluar, tanggal, lat, lng FROM tb_presensi WHERE karyawan_id = ?',
+                [req.session.user.id]);
+
+            if (query[0] == undefined) {
+                return res.status(400).json({ message: "Data tidak ditemukan" });
+
+            }
+
+            return res.status(200).json({ data: query[0] });
+
+
+
+
+        } catch (err) {
+            console.error('Error uploading file:', err.response);
+            res.status(500).send(`Error uploading file: ${err.message}`);
+        }
+    },
 
 
 
