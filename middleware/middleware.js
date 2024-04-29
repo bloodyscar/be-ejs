@@ -28,7 +28,7 @@ module.exports = {
                     if (err) {
                         console.log("null error jwt", req.session);
                         console.log(err);
-                        return res.redirect('/')
+                        return res.status(401).json({ statusCode: 401, message: 'Token tidak sama' })
                     } else {
                         console.log("else req session user", token_data.user);
                         req.session.user = {
