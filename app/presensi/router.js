@@ -16,7 +16,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ dest: 'uploads/', storage: storage });
 
-// router.use(jwtToSession);/
+router.use(jwtToSession);
 router.post('/masuk', authenticateToken, upload.single('file'), actionAbsenMasuk);
 router.post('/check_face', authenticateToken, actionCheckFace);
 
