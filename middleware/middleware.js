@@ -18,37 +18,29 @@ module.exports = {
     },
     jwtToSession: async (req, res, next) => {
         try {
-            console.log("AWALAN", req.session.user)
-            if (req.session.user === null || req.session.user === undefined) {
-                // check jwt
-                console.log("null 1", req.session);
-                const authHeader = req.headers['authorization']
-                const token = authHeader && authHeader.split(' ')[1]
-                console.log("token", token)
+            if (!req.session.user) {
+                // Extract token from request headers, query parameters, or cookies
+                const token = req.cookies.auth;
+                if (!token) {
+                    return res.status(401).json({ error: 'Authentication token is missing' });
+                }
 
-                jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function (err, token_data) {
+                // Verify the token
+                jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decodedToken) => {
                     if (err) {
-                        console.log("null error jwt", req.session);
-                        console.log(err);
-                        return res.status(401).json({ statusCode: 401, message: err })
+                        return res.status(403).json({ error: 'Failed to authenticate token' });
                     } else {
-                        console.log("else req session user", token_data.user);
-                        req.session.user = {
-                            user_id: token_data.user.user_id,
-                            role_id: token_data.user.role_id,
-                            member_id: token_data.user.member_id,
-                            username: token_data.user.username,
-                            name: token_data.user.name,
-                        };
-                        next();
+                        // Token is valid, set user data in the session
+                        req.session.user = decodedToken.user; // Assuming your token payload has a 'user' property
+                        next(); // Proceed to the next middleware
                     }
                 });
             } else {
-                console.log("req session tidak null")
+                // If session user already exists, proceed to the next middleware
                 next();
             }
         } catch (error) {
-            console.log("CATCH MIDDLEWARE")
+            console.error('Error occurred in middleware:', error);
             next(error);
         }
     },
