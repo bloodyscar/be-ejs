@@ -58,7 +58,7 @@ module.exports = {
 
 
                     // Successful login
-                    res.status(200).json({ message: 'Login successful', token: token });
+                    res.status(200).json({ message: 'Login successful', token: token, user: req.session.user });
 
                 } else {
                     res.status(400).json({ message: 'Salah Password' });
