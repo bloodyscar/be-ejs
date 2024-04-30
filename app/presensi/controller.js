@@ -94,6 +94,7 @@ module.exports = {
         try {
             let formData = new FormData();
             formData.append('npk', req.session.user.npk);
+            console.log("NPK", req.session.user.npk)
 
             // Send the image file to the FastAPI server
             axios.post('http://103.206.246.227/check_face', formData, {
@@ -102,8 +103,17 @@ module.exports = {
                 .then(async response => {
                     console.log("res.data", response.data)
 
+                    if (response.data.message == "Data face belum ada") {
+                        console.log("belum ada")
+                        return res.status(200).json({ data: response.data });
+                    } if (response.data.message == "Data face sudah ada") {
+                        console.log("sudah ada")
+                        return res.status(201).json({ data: response.data });
+                    } else {
+                        return res.status(400).json({ message: "error" });
+                    }
 
-                    return res.status(200).json({ data: response.data });
+
 
                 })
                 .catch(err => {
