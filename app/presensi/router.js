@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const { actionAbsenMasuk, actionCheckFace, checkPresensi, } = require('./controller');
+const { actionAbsen, actionCheckFace, checkPresensi, } = require('./controller');
 const { jwtToSession, authenticateToken } = require('../../middleware/middleware');
 const multer = require('multer');
 
@@ -17,7 +17,7 @@ const storage = multer.diskStorage({
 const upload = multer({ dest: 'uploads/', storage: storage });
 
 router.use(jwtToSession);
-router.post('/masuk', authenticateToken, upload.single('file'), actionAbsenMasuk);
+router.post('/', authenticateToken, upload.single('file'), actionAbsen);
 router.post('/check_face', authenticateToken, actionCheckFace);
 router.get('/check_presensi', authenticateToken, checkPresensi);
 
