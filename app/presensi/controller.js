@@ -41,7 +41,7 @@ module.exports = {
 
                 if (response.data.predict != req.body.npk) {
                     console.log("Tidak sama")
-                    return res.status(400).json({ error: "Tidak sama" });
+                    return res.status(400).json({ message: "Tidak sama" });
                 }
 
                 const promisePool = pool.promise();
