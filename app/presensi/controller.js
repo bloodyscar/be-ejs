@@ -59,52 +59,33 @@ module.exports = {
                     // Format the timestamp as a string in the desired format
                     const formattedTimestamp = timestamp.format('YYYY-MM-DD HH:mm:ss');
 
-                    console.log(formattedTimestamp)
-
                     // cek tb presensi current date
                     let [query, field3] = await promisePool.query(
                         "SELECT * FROM tb_presensi WHERE karyawan_id= ? AND DATE(tanggal) = CURRENT_DATE",
                         [req.session.user.id]
                     );
 
-                    console.log(query[0]);
+                    console.log(query[0])
+
+                    // Jika kolom pada tb_presensi ada, maka presensi pulang
                     if (query[0] != undefined) {
-                        return res.status(400).json({ message: "Sudah presensi masuk hari ini" });
+                        let [user2, field2] = await promisePool.query(
+                            "UPDATE tb_presensi SET karyawan_id = ?, jam_absen_keluar =? WHERE id = ?",
+                            [req.session.user.id, formattedTimestamp, query[0].id]
+                        );
+                        // Successful login
+                        return res.status(200).json({ message: "Berhasil Presensi Pulang" });
+                    } else {
+                        let [user2, field2] = await promisePool.query(
+                            "INSERT INTO tb_presensi (karyawan_id, jam_absen_masuk, tanggal) VALUES (?,?, ?)",
+                            [req.session.user.id, formattedTimestamp, formattedTimestamp]
+                        );
+                        // Successful login
+                        return res.status(201).json({ data: user[0], time: formattedTimestamp, message: "Berhasil Presensi Masuk" });
                     }
 
-                    let [user2, field2] = await promisePool.query(
-                        "INSERT INTO tb_presensi (karyawan_id, jam_absen_masuk, tanggal) VALUES (?,?, ?)",
-                        [req.session.user.id, formattedTimestamp, formattedTimestamp]
-                    );
-                    // Successful login
-                    return res.status(200).json({ data: user[0], time: formattedTimestamp });
+
                 });
-            } else if (tipe == 'PULANG') {
-                // Create a timestamp representing the current date and time
-                const timestamp = moment();
-
-                // Format the timestamp as a string in the desired format
-                const formattedTimestamp = timestamp.format('YYYY-MM-DD HH:mm:ss');
-
-
-
-                console.log(formattedTimestamp)
-
-                const promisePool = pool.promise();
-
-                let [user, field] = await promisePool.query(
-                    "SELECT * FROM tb_presensi WHERE karyawan_id= ? ORDER BY tanggal DESC",
-                    [req.session.user.id]
-                );
-
-                console.log(user[0])
-
-                let [user2, field2] = await promisePool.query(
-                    "UPDATE tb_presensi SET karyawan_id = ?, jam_absen_keluar =? WHERE id = ?",
-                    [req.session.user.id, formattedTimestamp, user[0].id]
-                );
-                // Successful login
-                return res.status(200).json({ message: "Berhasil Presensi Pulang" });
             }
 
 
