@@ -15,6 +15,7 @@ const moment = require('moment')
 module.exports = {
     actionAbsen: async (req, res) => {
         try {
+            const { lat, lng } = req.body;
             // Read the image file asynchronously
             fs.readFile(req.file.path, async (err, data) => {
                 if (err) {
@@ -74,8 +75,8 @@ module.exports = {
                     return res.status(200).json({ message: "Berhasil Presensi Pulang" });
                 } else {
                     let [user2, field2] = await promisePool.query(
-                        "INSERT INTO tb_presensi (karyawan_id, jam_absen_masuk, tanggal) VALUES (?,?, ?)",
-                        [req.session.user.id, formattedTimestamp, formattedTimestamp]
+                        "INSERT INTO tb_presensi (karyawan_id, jam_absen_masuk, tanggal, lat, lng) VALUES (?,?, ?, ? , ?)",
+                        [req.session.user.id, formattedTimestamp, formattedTimestamp, lat, lng]
                     );
                     // Successful login
                     return res.status(201).json({ data: user[0], time: formattedTimestamp, message: "Berhasil Presensi Masuk" });
