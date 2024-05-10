@@ -52,7 +52,7 @@ module.exports = {
                     [response.data.predict]);
 
                 // Create a timestamp representing the current date and time
-                const timestamp = moment().utc()
+                const timestamp = moment()
 
                 // Format the timestamp as a string in the desired format
                 const formattedTimestamp = timestamp.format('YYYY-MM-DD HH:mm:ss');
