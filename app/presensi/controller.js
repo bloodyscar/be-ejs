@@ -13,7 +13,7 @@ const moment = require('moment')
 
 
 module.exports = {
-    actionAbsen: async (req, res) => {
+    actionAbsenMasuk: async (req, res) => {
         try {
             const { lat, lng } = req.body;
             // Read the image file asynchronously
@@ -87,6 +87,39 @@ module.exports = {
 
             });
 
+
+        } catch (err) {
+            console.error('Error uploading file:', err.response);
+            res.status(500).send(`Error uploading file: ${err.message}`);
+        }
+    },
+    actionAbsenPulang: async (req, res) => {
+        try {
+            const { lat, lng } = req.body;
+
+            const timestamp = moment()
+
+            // Format the timestamp as a string in the desired format
+            const formattedTimestamp = timestamp.format('YYYY-MM-DD HH:mm:ss');
+
+            console.log("formattedTimestamp", formattedTimestamp);
+
+            const promisePool = pool.promise();
+
+            // cek tb presensi current date
+            let [query, field3] = await promisePool.query(
+                "SELECT * FROM tb_presensi WHERE karyawan_id= ?",
+                [req.session.user.id]
+            );
+
+            console.log("query[0]", query[0])
+
+            let [user2, field2] = await promisePool.query(
+                "UPDATE tb_presensi SET karyawan_id = ?, jam_absen_keluar =? WHERE id = ?",
+                [req.session.user.id, formattedTimestamp, query[0].id]
+            );
+            // Successful login
+            return res.status(200).json({ message: "Berhasil Presensi Pulang" });
 
         } catch (err) {
             console.error('Error uploading file:', err.response);
