@@ -52,10 +52,12 @@ module.exports = {
                     [response.data.predict]);
 
                 // Create a timestamp representing the current date and time
-                const timestamp = moment();
+                const timestamp = moment().utc()
 
                 // Format the timestamp as a string in the desired format
                 const formattedTimestamp = timestamp.format('YYYY-MM-DD HH:mm:ss');
+
+                console.log("formattedTimestamp", formattedTimestamp);
 
                 // cek tb presensi current date
                 let [query, field3] = await promisePool.query(
@@ -63,7 +65,7 @@ module.exports = {
                     [req.session.user.id]
                 );
 
-                console.log(query[0])
+                console.log("query[0]", query[0])
 
                 // Jika kolom pada tb_presensi ada, maka presensi pulang
                 if (query[0] != undefined) {
