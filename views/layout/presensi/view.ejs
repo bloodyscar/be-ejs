@@ -1,0 +1,857 @@
+<%- include('../../partials/header.ejs') %>
+    <%- include('../../partials/navbar.ejs') %>
+        <!-- End Navbar -->
+        <div class="container py-4">
+
+
+            <div class="row">
+                <div class="col-12">
+                    <button id="datePickerButton" class="btn btn-primary mb-3">Cetak Excel</button>
+                    <div class="card mb-4">
+
+
+                        <div class="card-body px-0 pt-0 pb-2">
+
+
+                            <div id="utama" class="table-responsive p-0"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal ADD -->
+            <div class="modal fade" id="ModalNew" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header bg-light p-3">
+                            <h5 class="modal-title" id="ModalNewJudul"></h5>
+                            <button type="button" onclick="
+                      closeModal()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                                id="close-modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="col-lg-12">
+                                <label for="tasksTitle-field" modalnewAbsenperiodeclass="form-label">Username</label>
+                                <input type="text" id="username" name="username" class="form-control">
+                            </div>
+                            <div class="col-lg-12">
+                                <label for="tasksTitle-field" modalnewAbsenperiodeclass="form-label">Password</label>
+                                <input type="password" id="password" name="password" class="form-control">
+                            </div>
+                            <div class="col-lg-12">
+                                <label for="tasksTitle-field" modalnewAbsenperiodeclass="form-label">Nama</label>
+                                <input type="text" id="nama" name="nama" class="form-control">
+                            </div>
+                            <div class="col-lg-12">
+                                <div>
+                                    <label for="tasksTitle-field" modalnewAbsenperiodeclass="form-label">Role</label>
+                                    <select id="roles" name="roles" class="form-control select2" style="width: 100%">
+                                    </select>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" onclick=" $('#ModalNew').modal('hide')" class="btn btn-secondary"
+                                data-dismiss="modal">Tutup</button>
+                            <button type="button" class="btn btn-primary" onclick="NewAkun()">Simpan</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal EDIT -->
+            <div class="modal fade" id="ModalEdit" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header bg-light p-3">
+                            <h5 class="modal-title" id="ModalEditJudul"></h5>
+                            <button type="button" onclick="
+                      closeModal()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                                id="close-modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="col-lg-12" hidden>
+                                <div>
+                                    <label for="tasksTitle-field" modalAbsenperiodeclass="form-label">Id </label>
+                                    <input type="text" id="user_id" name="user_id" class="form-control">
+
+                                </div>
+                            </div>
+                            <div class="col-lg-12 mb-3">
+                                <label for="tasksTitle-field" modalnewAbsenperiodeclass="form-label">Tanggal</label>
+                                <input type="text" class="form-control" id="editTanggal" name="editTanggal" required>
+                            </div>
+
+
+                            <div class="col-lg-12  mb-3">
+                                <label for="tasksTitle-field" modalnewAbsenperiodeclass="form-label">Presensi Masuk
+                                </label>
+                                <input type="text" id="editPresensiMasuk" name="editPresensiMasuk" class="form-control">
+                            </div>
+
+                            <div class="col-lg-12  mb-3">
+                                <label for="tasksTitle-field" modalnewAbsenperiodeclass="form-label">Presensi Pulang
+                                </label>
+                                <input type="text" id="editPresensiPulang" name="editPresensiPulang"
+                                    class="form-control">
+                            </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" onclick=" $('#ModalEdit').modal('hide')" class="btn btn-secondary"
+                                data-dismiss="modal">Tutup</button>
+                            <button type="button" class="btn btn-primary" onclick="editAkun()">Edit</button>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade zoomIn" id="formModalsHapus" tabindex="-1" aria-labelledby="deleteRecordLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                                id="btn-close"></button>
+                        </div>
+                        <div class="modal-body p-5 text-center">
+                            <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop"
+                                colors="primary:#405189,secondary:#f06548" style="width:90px;height:90px"></lord-icon>
+
+                            <div class="row mb-1">
+                                <div class="col"><input type="hidden" id="delete_user_id"
+                                        class="form-control form-control-sm" disabled value=""></div>
+                            </div>
+
+                            <div class="mt-4 text-center">
+                                <h4 class="fs-semibold" id="titleModal"></h4>
+                                <p class="text-muted fs-14 mb-4 pt-1"></p>
+                                <div class="hstack gap-2 justify-content-center remove">
+                                    <button class="btn btn-link link-success fw-medium text-decoration-none"
+                                        data-bs-dismiss="modal"><i class="ri-close-line me-1 align-middle"></i>
+                                        Tutup</button>
+                                    <button class="btn btn-danger" onclick="hapusKontak()">Hapus</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+        <script type="text/javascript"
+            src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+        <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
+
+        <script src="https://printjs-4de6.kxcdn.com/print.min.js"></script>
+        <script src="/assets/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+        <script>
+            const url = window.location.href.split('/');
+            const baseUrl = `${url[0]}//${url[2]}/${url[3]}/`;
+            console.log(baseUrl)
+
+            let kota = [];
+            let kecamatan = [];
+            let kelurahan = [];
+            let noTps = [];
+            let masuk;
+            let pulang;
+            let tanggal;
+
+            window.addEventListener('DOMContentLoaded', async () => {
+                renderUtama();
+
+                getMember();
+
+                getTime();
+
+                // Attach click event listener to the button
+                $('#datePickerButton').daterangepicker({
+                    opens: 'left'
+                }, function (start, end, label) {
+                    console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+
+                    let data = {};
+                    data['start'] = start.format('YYYY-MM-DD')
+                    data['end'] = end.format('YYYY-MM-DD')
+
+                    // Create a new XMLHttpRequest object
+                    const xhr = new XMLHttpRequest();
+
+                    // Specify the endpoint URL and request method
+                    xhr.open('POST', `${baseUrl}cetak_excel`, true);
+
+                    // Set request header
+                    xhr.setRequestHeader('Content-Type', 'application/json');
+
+                    // Set responseType to 'blob' to receive binary data
+                    xhr.responseType = 'blob';
+
+                    // Define success and error callbacks
+                    xhr.onload = function () {
+                        if (xhr.status === 200) {
+                            // Create a Blob object from the binary data
+                            const blob = new Blob([xhr.response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+                            // Create a download link for the Blob
+                            const url = window.URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = 'Presensi.xlsx';
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                            window.URL.revokeObjectURL(url);
+                        } else {
+                            console.error('Failed to fetch data');
+                        }
+                    };
+
+                    xhr.onerror = function () {
+                        console.error('Error fetching data');
+                    };
+
+                    // Send the request with JSON data
+                    xhr.send(JSON.stringify(data));
+
+                });
+            });
+
+            function getTime() {
+                $('input[name="editPresensiMasuk"]').daterangepicker({
+                    singleDatePicker: true,
+                    timePicker: true,
+                    timePicker24Hour: true,
+                    startDate: moment().startOf('hour'),
+                    endDate: moment().startOf('hour').add(32, 'hour'),
+                    locale: {
+                        format: 'HH:mm'
+                    }
+                }, function (start) {
+                    masuk = start;
+                });
+
+                $('input[name="editPresensiPulang"]').daterangepicker({
+                    singleDatePicker: true,
+                    timePicker: true,
+                    timePicker24Hour: true,
+                    startDate: moment().startOf('hour'),
+                    endDate: moment().startOf('hour').add(32, 'hour'),
+                    locale: {
+                        format: 'HH:mm'
+                    }
+                }, function (start) {
+                    pulang = start;
+                });
+            }
+
+            function getTanggal() {
+                $('input[name="editTanggal"]').daterangepicker({
+                    singleDatePicker: true,
+                    showDropdowns: true,
+                    minYear: 1901,
+                    maxYear: parseInt(moment().format('YYYY'), 10),
+                    locale: {
+                        format: 'DD-MM-YYYY'
+                    },
+                }, function (start, end, label) {
+                    // $(`#editTanggal`).val(start.format('DD-MM-YYYY'))
+                    const formattedStartDate = editFormatDate(start);
+                    $('#editTanggal').val(formattedStartDate);
+                    tanggal = start
+                });
+            }
+
+            function getMember() {
+                $.ajax({
+                    url: baseUrl + 'getAllPresensi',
+                    dataType: 'JSON',
+                    type: 'GET',
+                    success: function (res) {
+                        arr = res.data ?? [];
+                        console.log(arr)
+
+
+                    }
+                })
+            }
+
+
+            const renderUtama = () => {
+                document.querySelector('#utama').innerHTML = tableUtamaHTML;
+                dataTableUtama();
+            };
+
+            function getProv() {
+                $.ajax({
+                    url: baseUrl + 'provinsi',
+                    dataType: 'JSON',
+                    type: 'GET',
+                    success: function (res) {
+                        arr = res.data ?? [];
+                        console.log(arr)
+                        // let select = $('#editProvinsi');
+
+                        // Clear existing options (if any)
+                        // select.empty();
+                        // Add "Pilih Provinsi" as the default option
+                        // let defaultOption = $('<option></option>').attr('value', '').text('Pilih Provinsi');
+                        // select.append(defaultOption);
+
+                        // Add options for provinces
+                        // arr.forEach(function (province) {
+                        //     // Create an <option> element
+                        //     let option = $('<option></option>').attr('value', province.id).text(province.provinsi);
+
+                        //     // Append the option to the select element
+                        //     select.append(option);
+                        // });
+
+                    }
+                })
+            }
+
+            function getKabkota(provId) {
+                $.ajax({
+                    url: baseUrl + 'kabkota',
+                    dataType: 'JSON',
+                    data: { provinceId: provId },
+                    type: 'POST',
+                    success: function (res) {
+                        kota = res.data ?? [];
+                        // console.log(arr)
+                        // let select = $('#kabkota');
+                        // // Clear existing options (if any)
+                        // select.empty();
+                        // // Add "Pilih Provinsi" as the default option
+                        // let defaultOption = $('<option></option>').attr('value', '').text('Pilih Kota');
+                        // select.append(defaultOption);
+
+                        // // Add options for provinces
+                        // arr.forEach(function (kabkota) {
+                        //     // Create an <option> element
+                        //     let option = $('<option></option>').attr('value', kabkota.id).text(kabkota.kabkota);
+
+                        //     // Append the option to the select element
+                        //     select.append(option);
+                        // });
+
+                    }
+                })
+            }
+
+            function getKecamatan(kabId, kecId) {
+                $.ajax({
+                    url: baseUrl + 'kecamatan',
+                    dataType: 'JSON',
+                    data: { kabkotaId: kabId },
+                    type: 'POST',
+                    success: function (res) {
+                        kecamatan = res.data ?? [];
+                        console.log(kecamatan)
+                        let select = $('#editKecamatan');
+                        // // Clear existing options (if any)
+                        // select.empty();
+                        // // Add "Pilih Provinsi" as the default option
+                        console.log("sadsadad", kecId)
+                        let htmlKecamatan;
+                        // // Add options for provinces
+                        kecamatan.forEach(function (kel) {
+                            htmlKecamatan +=
+                                `<option value = "${kel.id}" ${(kel.id == kecId) ? 'selected' : ''}>${kel.kecamatan} </option>`
+                            // Create an <option> element
+                            let option = $('<option></option>').attr('value', kel.id).text(kel.kecamatan);
+
+                            // Append the option to the select element
+                            select.append(option);
+                        });
+                        $("#editKecamatan").html(htmlKecamatan)
+
+
+                        // // Add options for provinces
+                        // kecamatan.forEach(function (kec) {
+                        //     // Create an <option> element
+                        //     let option = $('<option></option>').attr('value', kec.id).text(kec.kecamatan);
+
+                        //     // Append the option to the select element
+                        //     select.append(option);
+                        // });
+
+                    }
+                })
+            }
+
+            function getKelurahan(kecId, kelId) {
+                $.ajax({
+                    url: baseUrl + 'kelurahan',
+                    dataType: 'JSON',
+                    data: { kecamatanId: kecId },
+                    type: 'POST',
+                    success: function (res) {
+                        kelurahan = res.data ?? [];
+                        let select = $('#editKelurahan');
+                        // // Clear existing options (if any)
+                        // select.empty();
+                        // // Add "Pilih Provinsi" as the default option
+                        console.log("sadsadad", kecId)
+                        let htmlKelurahan;
+                        // // Add options for provinces
+                        kelurahan.forEach(function (kel) {
+                            htmlKelurahan +=
+                                `<option value = "${kel.id}" ${(kel.id == kelId) ? 'selected' : ''}>${kel.kelurahan} </option>`
+                            // Create an <option> element
+                            let option = $('<option></option>').attr('value', kel.id).text(kel.kelurahan);
+
+                            // Append the option to the select element
+                            select.append(option);
+                        });
+                        $("#editKelurahan").html(htmlKelurahan)
+
+
+                        // // Add options for provinces
+                        // kelurahan.forEach(function (kel) {
+                        //     // Create an <option> element
+                        //     let option = $('<option></option>').attr('value', kel.id).text(kel.kelurahan);
+
+                        //     // Append the option to the select element
+                        //     select.append(option);
+                        // });
+
+                    }
+                })
+            }
+
+
+            function getTPS(kelId, tpsId) {
+                $.ajax({
+                    url: baseUrl + 'tps',
+                    dataType: 'JSON',
+                    data: { kelurahanId: kelId },
+                    type: 'POST',
+                    success: function (res) {
+                        noTps = res.data ?? [];
+                        console.log(noTps)
+                        let select = $('#editTps');
+                        // Clear existing options (if any)
+                        // Add "Pilih Provinsi" as the default option
+
+                        let htmlTps;
+                        // // Add options for provinces
+                        noTps.forEach(function (kel) {
+                            htmlTps +=
+                                `<option value = "${kel.id}" ${(kel.id == tpsId) ? 'selected' : ''}>${kel.no_tps} </option>`
+                            // Create an <option> element
+                            let option = $('<option></option>').attr('value', kel.id).text(kel.no_tps);
+
+                            // Append the option to the select element
+                            select.append(option);
+                        });
+                        $("#editTps").html(htmlTps)
+
+
+                        // Add options for provinces
+                        // noTps.forEach(function (tps) {
+                        //     // Create an <option> element
+                        //     let option = $('<option></option>').attr('value', tps.id).text(tps.no_tps);
+
+                        //     // Append the option to the select element
+                        //     select.append(option);
+                        // });
+
+                    }
+                })
+            }
+
+
+            const ModalNewAkun = () => {
+                $(`#ModalNewJudul`).text("Tambah Relawan")
+                let html;
+                html += `<option value = "" ></option>`
+
+                arr.forEach(d => {
+                    html +=
+                        `<option value = "${d.id}" ${(d.id == "") ? 'selected' : ''}> ${d.name} </option>`
+                });
+
+                $("#roles").html(html)
+                $("#roles").select2({
+                    placeholder: "Pilih Role",
+                    dropdownParent: $('#ModalNew')
+                });
+
+                // arr.forEach(d => {
+                // html +=
+                //     `<option value = "${d.fin_mastercoa_id}" ${(d.fin_mastercoa_id == "")?'selected':''}>(${d.kode_akun}) - ${d.nama_akun} </option>`
+                // });
+
+                // $("#kontak_coa_piutang_").html(html)
+                // $('#kontak_coa_piutang_').select2({
+                // placeholder: "Pilih akun",
+                // dropdownParent: $('#ModalNew')
+                // });
+
+
+
+                $('#ModalNew').modal('show');
+            }
+
+
+
+            const showSnackError = (text) => {
+                iziToast.error({
+                    title: "Info",
+                    message: text,
+                    leavetype: "topRight",
+                });
+            };
+
+            const editAkun = () => {
+                let total = 0;
+                const data = {}
+
+                console.log("masuk", masuk)
+                const ids = [
+                    "user_id",
+                    "editTanggal",
+                    "editPresensiMasuk",
+                    "editPresensiPulang",
+                ];
+                for (id of ids) {
+                    total += 1;
+                    const input = document.querySelector(`#${id}`);
+                    console.log(input.value)
+                    if (!input.value) {
+                        input.classList.add('is-invalid');
+                        showSnackError(id + ' Harap diisi');
+
+                    } else {
+                        input.classList.remove('is-invalid');
+                        data[id] = input.value;
+                    }
+                }
+
+                data['editPresensiMasuk'] = masuk.format('YYYY-MM-DD HH:mm:ss');
+                data['editPresensiPulang'] = pulang.format('YYYY-MM-DD HH:mm:ss');
+                data['editTanggal'] = tanggal.format('YYYY-MM-DD HH:mm:ss');
+
+
+                console.log("dataaa", data)
+
+                if (Object.keys(data).length == total) {
+                    $.ajax({
+                        url: baseUrl + 'edit_presensi',
+                        type: 'POST',
+                        data: data,
+                        success: function (res) {
+                            Swal.fire({
+                                position: 'center',
+                                icon: res.status == 200 ? "success" : "error",
+                                title: res.message,
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                            renderUtama();
+
+                            closeModal()
+
+
+                        }
+                    })
+
+                }
+
+            };
+
+
+            // Function to format date in DD/MM/YYYY format
+            function editFormatDate(dateString) {
+                const date = new Date(dateString);
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                return `${day}/${month}/${year}`;
+            }
+
+            const ModalEditAkun = (obj) => {
+                let html
+
+                console.log(obj)
+                let select = $('#editProvinsi');
+
+                $(`#ModalEditJudul`).text("Presensi")
+                $(`#editTanggal`).val(obj.tanggal)
+                $(`#user_id`).val(obj.id)
+
+                console.log("-------", obj)
+
+                getTanggal();
+
+
+                $('#ModalEdit').modal('show');
+            }
+
+            const NewAkun = () => {
+
+                let total = 0;
+                let data = {};
+                const ids = [
+                    "username",
+                    "password",
+                    "roles",
+                    "nama",
+                ];
+                for (id of ids) {
+                    total += 1;
+                    const input = document.querySelector(`#${id}`);
+                    if (!input.value) {
+                        input.classList.add('is-invalid');
+                        showSnackError(id + ' Harap diisi');
+
+                    } else {
+                        input.classList.remove('is-invalid');
+                        data[id] = input.value;
+
+                    }
+                }
+
+                if (Object.keys(data).length == total) {
+
+                    console.log(data)
+                    $.ajax({
+                        url: baseUrl + 'create_relawan',
+                        type: 'POST',
+                        dataType: 'JSON',
+                        data: data,
+                        success: function (res) {
+                            Swal.fire({
+                                position: 'center',
+                                icon: res.status == 200 ? "success" : "error",
+                                title: res.message,
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                            renderUtama();
+                            closeModal()
+
+
+                        }
+                    })
+
+                }
+
+            };
+
+            function closeModal() {
+                $('#ModalNew').modal('hide')
+                $('#ModalEdit').modal('hide')
+                $('#formModalsHapus').modal('hide')
+
+            }
+
+            function parseTimeStringToDateTime(timeString) {
+                const date = new Date(timeString);
+                const hours = String(date.getUTCHours()).padStart(2, '0');
+                const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+                const seconds = String(date.getUTCSeconds()).padStart(2, '0');
+                return `${hours}:${minutes}:${seconds}`;
+            }
+
+            function formatDate(dateString) {
+                const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+                const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+                const date = new Date(dateString);
+                const dayName = days[date.getUTCDay()];
+                const day = date.getUTCDate();
+                const monthName = months[date.getUTCMonth()];
+                const year = date.getUTCFullYear();
+
+                return `${dayName}, ${day} ${monthName} ${year}`;
+            }
+
+            const dataTableUtama = () => {
+                dtable = $('#tableUtama').DataTable({
+                    ajax: {
+                        url: `${baseUrl}/getAllPresensi`,
+                        dataSrc: 'data'
+                    },
+
+
+                    dom: "Bfrtip",
+                    columns: [
+                        {
+                            'render': function (data, type, row, meta) {
+                                return `<p class="mb-0 text-sm">${formatDate(row.tanggal)}</p><br>`
+                            }
+                        },
+                        {
+                            'render': function (data, type, row, meta) {
+                                return `<p class="mb-0 text-sm">${row.nama}</p><br>`
+                            }
+                        },
+                        {
+                            'render': function (data, type, row, meta) {
+                                return `<p class="mb-0 text-sm">${row.npk}</p><br>`
+                            }
+                        },
+                        {
+                            'render': function (data, type, row, meta) {
+                                return `<p class="mb-0 text-sm">${row.nama_divisi}</p><br>`
+                            }
+                        },
+                        {
+                            'render': function (data, type, row, meta) {
+                                return `<p class="mb-0 text-sm">${parseTimeStringToDateTime(row.jam_absen_masuk)}</p><br>`
+                            }
+                        },
+                        {
+                            'render': function (data, type, row, meta) {
+                                return `<p class="mb-0 text-sm">${parseTimeStringToDateTime(row.jam_absen_keluar)}</p><br>`
+                            }
+                        },
+                        {
+                            'render': function (data, type, row, meta) {
+                                return `<div>
+                                <button class="btn btn-link mb-0"
+                                        onclick='ModalEditAkun(` + JSON.stringify(row) + `)'
+                                        aria-haspopup="true" aria-expanded="false">
+                                    <i class="fa fa-edit text-xs" style="color: green;"></i>
+                                </button>
+                                
+                                <button class="btn btn-link  mb-0"
+                                    onclick='formModalsHapus(` + JSON.stringify(row) + `)'
+                                    aria-haspopup="true" aria-expanded="false"
+                                    style=>
+                                    <i class="fa fa-trash text-xs" style="color: red;"></i>
+                                </button >
+
+                                    </div > `
+                            }
+                        },
+
+                    ],
+
+                });
+
+            };
+
+
+            const printCard = (obj) => {
+                $.ajax({
+                    url: baseUrl + `convert/${obj.id}`,
+                    type: 'POST',
+                    dataType: 'JSON',
+                    success: function (res) {
+                        let uri = window.location.href.split('/');
+                        console.log(obj)
+                        const pdf = res.data
+                        setTimeout(() => {
+                            window.open(`${uri[0]}//${uri[2]}/${pdf[1]}`)
+                        }, 1000);
+
+                        // if (tipe == 'front') {
+
+                        // } else {
+                        //     window.open(`${uri[0]}//${uri[2]}/${pdf[0]}`)
+
+                        // }
+                        // pdf1 = `${uri[0]}//${uri[2]}/${pdf[0]}`
+                        // pdf2 = `${uri[0]}//${uri[2]}/${pdf[1]}`
+
+
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error fetching PDF:', error);
+                    }
+                })
+
+            }
+
+            const handlePDFReceived = (pdfData) => {
+                // Assuming pdfData contains the received PDF data
+
+                // Convert the received data into a Blob object
+                const pdfBlob = new Blob([pdfData], { type: 'application/pdf' });
+                const pdfUrl = URL.createObjectURL(pdfBlob);
+
+                // Open the print dialog in a new window
+                const printWindow = window.open(pdfUrl, '_blank');
+                printWindow.onload = function () {
+                    printWindow.print(); // Print the PDF once it's loaded
+                };
+            };
+
+            const formModalsHapus = (obj) => {
+                $('#delete_user_id').val(obj.id)
+                $('#titleModal').text(`Yakin ingin menghapus anggota bernama "${obj.name}"? `)
+                $('#formModalsHapus').modal('show');
+            }
+
+            const hapusKontak = (obj) => {
+                var data = {
+                    id: $('#delete_user_id').val()
+                }
+                $.ajax({
+                    url: baseUrl + 'delete_member',
+                    type: 'POST',
+                    dataType: 'JSON',
+                    data: data,
+                    success: function (res) {
+                        console.log(res)
+                        Swal.fire({
+                            position: 'center',
+                            icon: res.status == 200 ? "success" : "error",
+                            title: res.message,
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        renderUtama();
+                        closeModal()
+                    }
+                })
+            }
+
+
+
+            const tableUtamaHTML = `<table id="tableUtama" class="table align-items-center justify-content-center mb-0 cell-border">
+                    <thead style="background-color: #eee">
+                        <tr>
+                            <th
+                                class="text-uppercase  text-xs font-weight-bolder p-3 text-dark">
+                                Tanggal</th>
+                            <th
+                                class="text-uppercase text-xs text-dark font-weight-bolder p-3  ps-2">
+                                Nama</th>
+                            <th
+                                class="text-uppercase text-xs text-dark font-weight-bolder p-3  ps-2">
+                                NPK</th>
+                            <th
+                                class="text-uppercase text-xs text-dark font-weight-bolder p-3  ps-2">
+                                Divisi</th>
+                            <th
+                                class="text-uppercase text-xs text-dark font-weight-bolder p-3  ps-2">
+                                Jam Masuk</th>
+                            <th
+                                class="text-uppercase text-xs text-dark font-weight-bolder p-3  ps-2">
+                                Jam Pulang</th>
+                            <th
+                                class="text-uppercase text-xs text-dark font-weight-bolder p-3  ps-2">
+                                Aksi</th>
+                        </tr>
+                    </thead>
+                </table>`
+
+        </script>
