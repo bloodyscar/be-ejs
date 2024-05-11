@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const { actionAbsen, actionCheckFace, checkPresensi, actionAbsenMasuk, actionAbsenPulang, } = require('./controller');
+const { actionAbsen, actionCheckFace, checkPresensi, actionAbsenMasuk, actionAbsenPulang, getPresensiUser, } = require('./controller');
 const { jwtToSession, authenticateToken } = require('../../middleware/middleware');
 const multer = require('multer');
 
@@ -21,5 +21,6 @@ router.post('/', authenticateToken, upload.single('file'), actionAbsenMasuk);
 router.post('/pulang', authenticateToken, actionAbsenPulang);
 router.post('/check_face', authenticateToken, actionCheckFace);
 router.get('/check_presensi', authenticateToken, checkPresensi);
+router.get('/presensi_user', authenticateToken, getPresensiUser);
 
 module.exports = router;
