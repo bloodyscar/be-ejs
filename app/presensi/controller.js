@@ -38,11 +38,16 @@ module.exports = {
                     headers: { 'Content-Type': 'multipart/form-data' }
                 })
 
-                console.log("res.data", response.data.predict)
+                console.log("res.data", response.data)
 
-                if (response.data.predict != req.body.npk) {
+
+
+                if (response.data.predict != undefined && response.data.predict != req.body.npk) {
                     console.log("Tidak sama")
                     return res.status(400).json({ message: "Tidak sama" });
+                } else if (response.data.contains_face == false) {
+                    console.log("Tidak ada wajah")
+                    return res.status(400).json(response.data);
                 }
 
                 const promisePool = pool.promise();
