@@ -34,14 +34,14 @@ module.exports = {
                 formData.append('npk', req.body.npk);
 
                 // Send the image file to the FastAPI server
-                let response = await axios.post('http://103.206.246.227/upload-photo', formData, {
+                let response = await axios.post('103.206.246.227/predict-photo', formData, {
                     headers: { 'Content-Type': 'multipart/form-data' }
                 })
 
                 console.log("res.data", response.data)
 
 
-
+                // 103.206.246.227  
                 if (response.data.predict != undefined && response.data.predict != req.body.npk) {
                     console.log("Tidak sama")
                     return res.status(400).json({ message: "Tidak sama" });
