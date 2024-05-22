@@ -34,7 +34,7 @@ module.exports = {
                 formData.append('npk', req.body.npk);
 
                 // Send the image file to the FastAPI server
-                let response = await axios.post('http://103.206.246.227/upload-photo', formData, {
+                let response = await axios.post('http://103.206.246.227/predict-photo', formData, {
                     headers: { 'Content-Type': 'multipart/form-data' }
                 })
 
