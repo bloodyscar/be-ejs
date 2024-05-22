@@ -48,6 +48,9 @@ module.exports = {
                 } else if (response.data.contains_face == false) {
                     console.log("Tidak ada wajah")
                     return res.status(400).json(response.data);
+                } else if (response.data == false) {
+                    console.log("Tidak sama")
+                    return res.status(400).json({ message: "Tidak sama" });
                 }
 
                 const promisePool = pool.promise();
