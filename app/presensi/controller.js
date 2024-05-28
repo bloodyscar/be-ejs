@@ -34,15 +34,21 @@ module.exports = {
                 formData.append('npk', req.body.npk);
 
                 // Send the image file to the FastAPI server
+                // let response = await axios.post('http://127.0.0.1:8000/predict-photo', formData, {
+                //     headers: { 'Content-Type': 'multipart/form-data' }
+                // })
+
                 let response = await axios.post('http://103.206.246.227/predict-photo', formData, {
                     headers: { 'Content-Type': 'multipart/form-data' }
                 })
 
                 console.log("res.data", response.data)
 
+                // Check if npk "Adit Hernowo" is equal to predict "Adit Hernowo"
+
 
                 // 103.206.246.227  
-                if (response.data.predict != undefined && response.data.predict != req.body.npk) {
+                if (response.data.predict == undefined || response.data.predict != req.body.npk) {
                     console.log("Tidak sama")
                     return res.status(400).json({ message: "Tidak sama" });
                 } else if (response.data.contains_face == false) {
@@ -58,6 +64,7 @@ module.exports = {
                 let [user, field1] = await promisePool.query(
                     'SELECT tk.id, tk.npk, tk.nama, td.nama_divisi as divisi FROM tb_karyawan tk JOIN tb_divisi td ON td.id = tk.divisi_id WHERE npk = ?',
                     [response.data.predict]);
+
 
                 // Create a timestamp representing the current date and time
                 const timestamp = moment()
