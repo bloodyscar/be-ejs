@@ -57,37 +57,39 @@ module.exports = {
                 } else if (response.data == false) {
                     console.log("Tidak sama")
                     return res.status(400).json({ message: "Tidak sama" });
+                } else {
+                    const promisePool = pool.promise();
+                    // Check if the user exists in the database
+                    let [user, field1] = await promisePool.query(
+                        'SELECT tk.id, tk.npk, tk.nama, td.nama_divisi as divisi FROM tb_karyawan tk JOIN tb_divisi td ON td.id = tk.divisi_id WHERE npk = ?',
+                        [response.data.predict]);
+
+
+                    // Create a timestamp representing the current date and time
+                    const timestamp = moment()
+
+                    // Format the timestamp as a string in the desired format
+                    const formattedTimestamp = timestamp.format('YYYY-MM-DD HH:mm:ss');
+
+                    console.log("formattedTimestamp", formattedTimestamp);
+
+                    // cek tb presensi current date
+                    let [query, field3] = await promisePool.query(
+                        "SELECT * FROM tb_presensi WHERE karyawan_id= ? AND DATE(tanggal) = CURRENT_DATE",
+                        [req.session.user.id]
+                    );
+
+                    console.log("query[0]", query[0])
+
+                    let [user2, field2] = await promisePool.query(
+                        "INSERT INTO tb_presensi (karyawan_id, jam_absen_masuk, tanggal, lat, lng) VALUES (?,?, ?, ? , ?)",
+                        [req.session.user.id, formattedTimestamp, formattedTimestamp, lat, lng]
+                    );
+                    // Successful login
+                    return res.status(201).json({ data: user[0], time: formattedTimestamp, message: "Berhasil Presensi Masuk" });
                 }
 
-                const promisePool = pool.promise();
-                // Check if the user exists in the database
-                let [user, field1] = await promisePool.query(
-                    'SELECT tk.id, tk.npk, tk.nama, td.nama_divisi as divisi FROM tb_karyawan tk JOIN tb_divisi td ON td.id = tk.divisi_id WHERE npk = ?',
-                    [response.data.predict]);
 
-
-                // Create a timestamp representing the current date and time
-                const timestamp = moment()
-
-                // Format the timestamp as a string in the desired format
-                const formattedTimestamp = timestamp.format('YYYY-MM-DD HH:mm:ss');
-
-                console.log("formattedTimestamp", formattedTimestamp);
-
-                // cek tb presensi current date
-                let [query, field3] = await promisePool.query(
-                    "SELECT * FROM tb_presensi WHERE karyawan_id= ? AND DATE(tanggal) = CURRENT_DATE",
-                    [req.session.user.id]
-                );
-
-                console.log("query[0]", query[0])
-
-                let [user2, field2] = await promisePool.query(
-                    "INSERT INTO tb_presensi (karyawan_id, jam_absen_masuk, tanggal, lat, lng) VALUES (?,?, ?, ? , ?)",
-                    [req.session.user.id, formattedTimestamp, formattedTimestamp, lat, lng]
-                );
-                // Successful login
-                return res.status(201).json({ data: user[0], time: formattedTimestamp, message: "Berhasil Presensi Masuk" });
 
 
             });
