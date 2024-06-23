@@ -34,13 +34,13 @@ module.exports = {
                 formData.append('npk', req.body.npk);
 
                 // Send the image file to the FastAPI server
-                // let response = await axios.post('http://127.0.0.1:8000/predict-photo', formData, {
-                //     headers: { 'Content-Type': 'multipart/form-data' }
-                // })
-
-                let response = await axios.post('http://103.206.246.227/predict-photo', formData, {
+                let response = await axios.post('http://127.0.0.1:8000/predict-photo', formData, {
                     headers: { 'Content-Type': 'multipart/form-data' }
                 })
+
+                // let response = await axios.post('http://103.206.246.227/predict-photo', formData, {
+                //     headers: { 'Content-Type': 'multipart/form-data' }
+                // })
 
                 console.log("res.data", response.data)
 
@@ -115,7 +115,7 @@ module.exports = {
 
             // cek tb presensi current date
             let [query, field3] = await promisePool.query(
-                "SELECT * FROM tb_presensi WHERE karyawan_id= ?",
+                "SELECT * FROM tb_presensi WHERE karyawan_id= ? ORDER BY tanggal DESC LIMIT 1",
                 [req.session.user.id]
             );
 
@@ -175,7 +175,7 @@ module.exports = {
             const promisePool = pool.promise();
             // Check if the user exists in the database
             let [query, field] = await promisePool.query(
-                'SELECT karyawan_id, jam_absen_masuk, jam_absen_keluar, tanggal, lat, lng FROM tb_presensi WHERE karyawan_id = ?',
+                'SELECT karyawan_id, jam_absen_masuk, jam_absen_keluar, tanggal, lat, lng FROM tb_presensi WHERE karyawan_id = ? AND DATE(tanggal) = CURRENT_DATE',
                 [req.session.user.id]);
 
             if (query[0] == undefined) {
