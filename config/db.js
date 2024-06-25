@@ -12,7 +12,7 @@ const connection = mysql.createPool({
     password: "Demokrat@2024",
     // password: "",
     database: "db_karyawan",
-    // timezone: 'utc',
+    timezone: 'utc',
 
 });
 
