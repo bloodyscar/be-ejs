@@ -174,8 +174,11 @@ module.exports = {
         try {
             const promisePool = pool.promise();
             // Check if the user exists in the database
+            // let [query, field] = await promisePool.query(
+            //     'SELECT karyawan_id, jam_absen_masuk, jam_absen_keluar, tanggal, lat, lng FROM tb_presensi WHERE karyawan_id = ? AND DATE(tanggal) = CURRENT_DATE',
+            //     [req.session.user.id]);
             let [query, field] = await promisePool.query(
-                'SELECT karyawan_id, jam_absen_masuk, jam_absen_keluar, tanggal, lat, lng FROM tb_presensi WHERE karyawan_id = ? AND DATE(tanggal) = CURRENT_DATE',
+                'SELECT karyawan_id, jam_absen_masuk, jam_absen_keluar, tanggal, lat, lng FROM tb_presensi WHERE karyawan_id = ?',
                 [req.session.user.id]);
 
             if (query[0] == undefined) {
