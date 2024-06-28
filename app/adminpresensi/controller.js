@@ -32,7 +32,7 @@ module.exports = {
         try {
             const promisePool = pool.promise();
 
-            let getMember = await promisePool.query(`SELECT tp.id, tk.nama, tk.npk, td.nama_divisi, tp.jam_absen_masuk, tp.jam_absen_keluar, tp.tanggal FROM tb_presensi tp INNER JOIN tb_karyawan tk ON tk.id = tp.karyawan_id INNER JOIN tb_divisi td ON td.id = tk.divisi_id;`);
+            let getMember = await promisePool.query(`SELECT tp.id, tk.nama, tk.npk, td.nama_divisi, tp.jam_absen_masuk, tp.jam_absen_keluar, tp.tanggal FROM tb_presensi tp INNER JOIN tb_karyawan tk ON tk.id = tp.karyawan_id INNER JOIN tb_divisi td ON td.id = tk.divisi_id ORDER BY tp.tanggal DESC;`);
 
 
             console.log(getMember[0])
@@ -67,8 +67,11 @@ module.exports = {
             console.log(req.body.start)
             console.log(req.body.end)
 
+            let start = moment(req.body.start).locale('id').format('D MMMM YYYY')
+            let end = moment(req.body.end).locale('id').format('D MMMM YYYY')
+
             let getMember = await promisePool.query(`SELECT tk.nama, tk.npk, td.nama_divisi, tp.jam_absen_masuk, tp.jam_absen_keluar, tp.tanggal FROM tb_presensi tp INNER JOIN tb_karyawan tk ON tk.id = tp.karyawan_id INNER JOIN tb_divisi td ON td.id = tk.divisi_id
-            WHERE tanggal BETWEEN ? AND ?`, [req.body.start, req.body.end]);
+            WHERE tanggal BETWEEN ? AND ? ORDER BY tp.tanggal ASC`, [req.body.start, req.body.end]);
 
 
 
@@ -77,6 +80,17 @@ module.exports = {
             // Create a new Excel workbook
             const workbook = new ExcelJS.Workbook();
             const worksheet = workbook.addWorksheet('Presensi'); // Name of the worksheet
+
+            // Add "Presensi" and "Periode" in the top rows
+            worksheet.mergeCells('A1:F1'); // Merge cells A1 to F1 for "Presensi"
+            worksheet.getCell('A1').value = 'Daftar Hadir Karyawan';
+            worksheet.getCell('A1').alignment = { vertical: 'middle', horizontal: 'center' };
+            worksheet.getCell('A1').font = { bold: true, size: 14 };
+
+            worksheet.mergeCells('A2:F2'); // Merge cells A2 to F2 for "Periode"
+            worksheet.getCell('A2').value = `Periode: ${start} - ${end}`; // Set the period here
+            worksheet.getCell('A2').alignment = { vertical: 'middle', horizontal: 'center' };
+            worksheet.getCell('A2').font = { italic: true, size: 12 };
 
             // Add header row
             worksheet.addRow(['Nama', 'NPK', 'Divisi', 'Jam Masuk', 'Jam Pulang', 'Tanggal']);
