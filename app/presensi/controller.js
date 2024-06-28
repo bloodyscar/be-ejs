@@ -41,8 +41,13 @@ module.exports = {
                 let response = await axios.post('http://103.206.246.227/predict-photo', formData, {
                     headers: { 'Content-Type': 'multipart/form-data' }
                 })
+                // let response = await axios.post('http://127.0.0.1:8000/predict-photo', formData, {
+                //     headers: { 'Content-Type': 'multipart/form-data' }
+                // })
 
                 console.log("res.data", response.data)
+                const filePath = response.data.file_path;
+                const fileName = path.basename(filePath);
 
                 // Check if npk "Adit Hernowo" is equal to predict "Adit Hernowo"
 
@@ -86,7 +91,7 @@ module.exports = {
                         [req.session.user.id, formattedTimestamp, formattedTimestamp, lat, lng]
                     );
                     // Successful login
-                    return res.status(201).json({ data: user[0], time: formattedTimestamp, message: "Berhasil Presensi Masuk" });
+                    return res.status(201).json({ data: user[0], predict: response.data, time: formattedTimestamp, message: "Berhasil Presensi Masuk" });
                 }
 
 
@@ -201,7 +206,7 @@ module.exports = {
             const promisePool = pool.promise();
             // Check if the user exists in the database
             let [query, field] = await promisePool.query(
-                'SELECT jam_absen_masuk, jam_absen_keluar, tanggal FROM tb_presensi WHERE karyawan_id=?',
+                'SELECT jam_absen_masuk, jam_absen_keluar, tanggal FROM tb_presensi WHERE karyawan_id=? ORDER BY tanggal DESC',
                 [req.session.user.id]);
 
             if (query[0] == undefined) {

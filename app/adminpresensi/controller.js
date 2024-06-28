@@ -80,7 +80,7 @@ module.exports = {
 
             // Create a new Excel workbook
             const workbook = new ExcelJS.Workbook();
-            const worksheet = workbook.addWorksheet('Presensi'); // Name of the worksheet
+            const worksheet = workbook.addWorksheet('Presensi_Karyawan'); // Name of the worksheet
 
 
             // Add "Presensi" and "Periode" in the top rows
@@ -149,8 +149,9 @@ module.exports = {
             const excelBuffer = await workbook.xlsx.writeBuffer();
 
             // Set response headers for Excel file
-            res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+
             res.setHeader('Content-Disposition', `attachment; filename=Presensi_Karyawan_${timestamp}.xlsx`);
+            res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 
             // Send the Excel file as response
             res.send(excelBuffer);
