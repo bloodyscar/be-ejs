@@ -144,12 +144,13 @@ module.exports = {
                 column.width = maxLength < 10 ? 10 : maxLength;
             });
 
+            const timestamp = moment().format('YYYYMMDD_HHmmss');
             // Generate Excel file buffer
             const excelBuffer = await workbook.xlsx.writeBuffer();
 
             // Set response headers for Excel file
             res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-            res.setHeader('Content-Disposition', 'attachment; filename=Presensi.xlsx');
+            res.setHeader('Content-Disposition', `attachment; filename=Presensi_Karyawan_${timestamp}.xlsx`);
 
             // Send the Excel file as response
             res.send(excelBuffer);
