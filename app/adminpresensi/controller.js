@@ -10,6 +10,7 @@ const moment = require('moment-timezone');
 
 
 function parseTimeStringToDateTime(timeString) {
+
     const date = new Date(timeString);
     const hours = String(date.getUTCHours()).padStart(2, '0');
     const minutes = String(date.getUTCMinutes()).padStart(2, '0');
@@ -81,6 +82,7 @@ module.exports = {
             const workbook = new ExcelJS.Workbook();
             const worksheet = workbook.addWorksheet('Presensi'); // Name of the worksheet
 
+
             // Add "Presensi" and "Periode" in the top rows
             worksheet.mergeCells('A1:F1'); // Merge cells A1 to F1 for "Presensi"
             worksheet.getCell('A1').value = 'Daftar Hadir Karyawan';
@@ -92,19 +94,54 @@ module.exports = {
             worksheet.getCell('A2').alignment = { vertical: 'middle', horizontal: 'center' };
             worksheet.getCell('A2').font = { italic: true, size: 12 };
 
+            worksheet.mergeCells('A3:F3'); // Merge cells A2 to F2 for "Periode"
+            worksheet.getCell('A3').value = ` `;
+
             // Add header row
-            worksheet.addRow(['Nama', 'NPK', 'Divisi', 'Jam Masuk', 'Jam Pulang', 'Tanggal']);
+            const headerRow = worksheet.addRow(['Nama', 'NPK', 'Divisi', 'Jam Masuk', 'Jam Pulang', 'Tanggal']);
+            headerRow.eachCell((cell) => {
+                cell.font = { name: 'Times New Roman', size: 14 };
+                cell.alignment = { vertical: 'middle', horizontal: 'center' };
+                cell.border = {
+                    top: { style: 'thin', color: { argb: 'FF000000' } },
+                    left: { style: 'thin', color: { argb: 'FF000000' } },
+                    bottom: { style: 'thin', color: { argb: 'FF000000' } },
+                    right: { style: 'thin', color: { argb: 'FF000000' } }
+                };
+            });
 
             // Add data rows
             getMember[0].forEach(member => {
-                worksheet.addRow([
+                const dataRow = worksheet.addRow([
                     member.nama,
                     member.npk,
                     member.nama_divisi,
                     parseTimeStringToDateTime(member.jam_absen_masuk),
                     parseTimeStringToDateTime(member.jam_absen_keluar),
-                    member.tanggal
+                    moment(member.tanggal).locale('id').format('dddd, D MMMM YYYY')
                 ]);
+                dataRow.eachCell((cell) => {
+                    cell.font = { name: 'Times New Roman', size: 14 };
+                    cell.alignment = { vertical: 'middle', horizontal: 'center' };
+                    cell.border = {
+                        top: { style: 'thin', color: { argb: 'FF000000' } },
+                        left: { style: 'thin', color: { argb: 'FF000000' } },
+                        bottom: { style: 'thin', color: { argb: 'FF000000' } },
+                        right: { style: 'thin', color: { argb: 'FF000000' } }
+                    };
+                });
+            });
+
+            // Auto fit column widths based on the contents
+            worksheet.columns.forEach((column) => {
+                let maxLength = 0;
+                column.eachCell({ includeEmpty: true }, (cell) => {
+                    const columnLength = cell.value ? cell.value.toString().length : 10;
+                    if (columnLength > maxLength) {
+                        maxLength = columnLength;
+                    }
+                });
+                column.width = maxLength < 10 ? 10 : maxLength;
             });
 
             // Generate Excel file buffer
