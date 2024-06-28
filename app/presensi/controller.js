@@ -178,7 +178,7 @@ module.exports = {
             //     'SELECT karyawan_id, jam_absen_masuk, jam_absen_keluar, tanggal, lat, lng FROM tb_presensi WHERE karyawan_id = ? AND DATE(tanggal) = CURRENT_DATE',
             //     [req.session.user.id]);
             let [query, field] = await promisePool.query(
-                'SELECT karyawan_id, jam_absen_masuk, jam_absen_keluar, tanggal, lat, lng FROM tb_presensi WHERE karyawan_id = ?',
+                'SELECT karyawan_id, jam_absen_masuk, jam_absen_keluar, tanggal, lat, lng FROM tb_presensi tp WHERE karyawan_id = ? ORDER BY tp.jam_absen_masuk DESC',
                 [req.session.user.id]);
 
             if (query[0] == undefined) {
