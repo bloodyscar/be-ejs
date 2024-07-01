@@ -16,8 +16,33 @@ module.exports = {
     actionAbsenMasuk: async (req, res) => {
         try {
             const { lat, lng } = req.body;
+
+
+            const tempPath = req.file.path;
+            const targetDir = path.join('./uploads'); // Destination directory at root project level
+            const targetPath = path.join(targetDir, `${req.body.npk}.jpg`); // Target file path with .jpg extension
+
+            // Create the destination directory if it doesn't exist
+            if (!fs.existsSync(targetDir)) {
+                fs.mkdirSync(targetDir, { recursive: true }); // Create all parent directories if they don't exist
+            }
+
+            fs.rename(tempPath, targetPath, err => {
+                if (err) {
+                    console.log(err)
+                    return res
+                        .status(400)
+                        .json({ message: "Gagal upload file" });
+                }
+
+                // console.log("targetPath", targetPath)
+
+            });
+
+
+
             // Read the image file asynchronously
-            fs.readFile(req.file.path, async (err, data) => {
+            fs.readFile(targetPath, async (err, data) => {
                 if (err) {
                     console.error(err);
                     return;
@@ -90,9 +115,12 @@ module.exports = {
                         "INSERT INTO tb_presensi (karyawan_id, jam_absen_masuk, tanggal, lat, lng) VALUES (?,?, ?, ? , ?)",
                         [req.session.user.id, formattedTimestamp, formattedTimestamp, lat, lng]
                     );
+
+
                     // Successful login
                     return res.status(201).json({ data: user[0], predict: response.data, time: formattedTimestamp, message: "Berhasil Presensi Masuk" });
                 }
+
 
 
 

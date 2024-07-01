@@ -31,6 +31,7 @@ app.use(session({
 }));
 app.use(express.static('public'))
 app.use('/assets', express.static('assets'));
+app.use('/uploads', express.static('uploads'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', authRouter);
